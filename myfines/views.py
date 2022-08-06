@@ -3,30 +3,43 @@ from django.shortcuts import render, redirect
 
 from .models import *
 
-menu = ['О сайте', 'Обратная связь', 'Помощь', 'Войти']
+menu = [{'title': "О сайте", 'url_name': 'about'},
+        {'title': "Помощь", 'url_name': 'helpme'},
+        {'title': "Обратная связь", 'url_name': 'contact'},
+        {'title': "Авторизация", 'url_name': 'login'}
+        ]
 
 
 def index(request):
     posts = Fines.objects.all()
-    return render(request, 'myfines/index.html', {'posts': posts, 'menu': menu, 'title': 'Главная страница'})
+    context = {
+        'posts': posts,
+        'menu': menu,
+        'title': 'Главная страница'
+    }
+
+    return render(request, 'myfines/index.html', context=context)
+
 
 def about(request):
     return render(request, 'myfines/about.html', {'menu': menu, 'title': 'О сайте'})
 
 
-def categories(request, catid):
-    if request.POST:
-        print(request.POST)
-
-    return HttpResponse(f'<h1>Статьи по категориям</h1><p>{catid}</p>')
+def helpme(request):
+    return HttpResponse("Помощь")
 
 
-def archive(request, year):
-    if int(year) > 2022:
-        return redirect('home', permanent=True)
+def contact(request):
+    return HttpResponse("Обратная связь")
 
-    return HttpResponse(f'<h1>Архив по годам</h1>{year}</p>')
+
+def login(request):
+    return HttpResponse("Авторизация")
+
 
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+
+def show_post(request, post_id):
+    return HttpResponse(f"Отображение статьи с id = {post_id}")
