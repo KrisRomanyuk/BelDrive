@@ -1,9 +1,17 @@
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 
+from .models import *
+
+menu = ['О сайте', 'Обратная связь', 'Помощь', 'Войти']
+
 
 def index(request):
-    return HttpResponse('Страница приложения BelDrive')
+    posts = Fines.objects.all()
+    return render(request, 'myfines/index.html', {'posts': posts, 'menu': menu, 'title': 'Главная страница'})
+
+def about(request):
+    return render(request, 'myfines/about.html', {'menu': menu, 'title': 'О сайте'})
 
 
 def categories(request, catid):
