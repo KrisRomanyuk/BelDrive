@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
+from .forms import *
 from .models import *
 
 menu = [{'title': "О сайте", 'url_name': 'about'},
@@ -28,7 +29,19 @@ def about(request):
 
 
 def helpme(request):
-    return HttpResponse("Помощь")
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            # print(form.cleaned_data)
+            try:
+                Fines.objects.create(**form.cleaned_data)
+                return redirect('home')
+            except:
+                form.add_error(None, 'Ошибка добавления обращения')
+    else:
+        form = AddPostForm()
+
+    return render(request, 'myfines/helpme.html', {'menu': menu, 'title': 'Добавление обращения', 'form': form})
 
 
 def contact(request):
@@ -39,9 +52,9 @@ def login(request):
     return HttpResponse("Авторизация")
 
 
-
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
+
 
 def show_post(request, post_slug):
     post = get_object_or_404(Fines, slug=post_slug)
