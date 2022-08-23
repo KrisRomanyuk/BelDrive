@@ -33,14 +33,10 @@ def helpme(request):
         form = AddPostForm(request.POST)
         if form.is_valid():
             # print(form.cleaned_data)
-            try:
-                Fines.objects.create(**form.cleaned_data)
-                return redirect('home')
-            except:
-                form.add_error(None, 'Ошибка добавления обращения')
+            form.save()
+            return redirect('home')
     else:
         form = AddPostForm()
-
     return render(request, 'myfines/helpme.html', {'menu': menu, 'title': 'Добавление обращения', 'form': form})
 
 
@@ -83,3 +79,4 @@ def show_category(request, cat_id):
     }
 
     return render(request, 'myfines/index.html', context=context)
+
